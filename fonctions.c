@@ -1,6 +1,6 @@
 #include "fonctions.h"
 
-/*yallala*/
+/*bonjoujou*/
 
 int write_in_queue(RT_QUEUE *msgQueue, void * data, int size);
 
