@@ -17,7 +17,7 @@ void envoyer(void * arg) {
         	message->print(message, 100);
 
         	if (write_in_queue(&queueErrMsg, message, sizeof (DMessage)) < 0) {
-            	message->free(mesintsage);
+            	message->free(message);
         	}
 		
     		rt_mutex_acquire(&mutexEtat, TM_INFINITE);
@@ -45,7 +45,7 @@ void connecter(void * arg) {
     int status;
     DMessage *message;
 
-    rt_printf("tconnect : Debut de    DMessage *message; l'exécution de tconnect\n");
+    rt_printf("tconnect : Debut de l'exécution de tconnect\n");
 
     while (1) {
         rt_printf("tconnect : Attente du sémarphore semConnecterRobot\n");
@@ -74,7 +74,7 @@ void connecter(void * arg) {
         message->print(message, 100);
 
         if (write_in_queue(&queueMsgGUI, message, sizeof (DMessage)) < 0) {
-            message->free(mesintsage);
+            message->free(message);
         }
     }
 }
@@ -110,7 +110,7 @@ void communiquer(void *arg) {
                     switch (action->get_order(action)) {
                         case ACTION_CONNECT_ROBOT:
                             rt_printf("tserver : Action connecter robot\n");
-                            rt_sem    DMessage *message;_v(&semConnecterRobot);
+                            rt_sem_v(&semConnecterRobot);
                             break;
                     }
                     break;
