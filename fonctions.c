@@ -1,5 +1,5 @@
 #include "fonctions.h"
-//ceci est un test
+//ceci est un test 2
 
 int write_in_queue(RT_QUEUE *msgQueue, void * data, int size);
 
