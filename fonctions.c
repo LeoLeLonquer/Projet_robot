@@ -8,7 +8,13 @@
 >>>>>>> battery-feature
 =======
 //fdsfsdf
+<<<<<<< HEAD
 >>>>>>> 28b566cc54b21b5252cabae18e656b8dff53706a
+=======
+
+// test_leo
+
+>>>>>>> 739d6b32766fb0eaa803df8f77727c82c90336a3
 int write_in_queue(RT_QUEUE *msgQueue, void * data, int size);
 
 void envoyer(void * arg) {
