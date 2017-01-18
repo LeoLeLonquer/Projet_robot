@@ -1,9 +1,5 @@
 #include "fonctions.h"
-//adada
-//qseouhsfgopsjifopgjsdfogj dabaaaaaaa!
-//fdsfsdf
-
-// bonjour_leo
+//ceci est un test
 
 int write_in_queue(RT_QUEUE *msgQueue, void * data, int size);
 
