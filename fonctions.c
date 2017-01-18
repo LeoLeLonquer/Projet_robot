@@ -1,5 +1,5 @@
 #include "fonctions.h"
-
+/*test consta*/
 int write_in_queue(RT_QUEUE *msgQueue, void * data, int size);
 
 void envoyer(void * arg) {
