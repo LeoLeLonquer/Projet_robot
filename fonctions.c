@@ -1,6 +1,7 @@
 #include "fonctions.h"
 //adada
 //qseouhsfgopsjifopgjsdfogj dabaaaaaaa!
+//fdsfsdf
 int write_in_queue(RT_QUEUE *msgQueue, void * data, int size);
 
 void envoyer(void * arg) {
