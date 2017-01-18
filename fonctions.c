@@ -1,6 +1,10 @@
 #include "fonctions.h"
+<<<<<<< HEAD
 //adada
 //qseouhsfgopsjifopgjsdfogj dabaaaaaaa!
+=======
+/*test consta*/
+>>>>>>> battery-feature
 int write_in_queue(RT_QUEUE *msgQueue, void * data, int size);
 
 void envoyer(void * arg) {
