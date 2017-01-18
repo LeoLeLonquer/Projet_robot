@@ -2,9 +2,13 @@
 <<<<<<< HEAD
 //adada
 //qseouhsfgopsjifopgjsdfogj dabaaaaaaa!
+<<<<<<< HEAD
 =======
 /*test consta*/
 >>>>>>> battery-feature
+=======
+//fdsfsdf
+>>>>>>> 28b566cc54b21b5252cabae18e656b8dff53706a
 int write_in_queue(RT_QUEUE *msgQueue, void * data, int size);
 
 void envoyer(void * arg) {
