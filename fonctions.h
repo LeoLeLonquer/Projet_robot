@@ -1,6 +1,6 @@
 /*
  * File:   fonctions.h
- * Author: pehladik et Léo
+ * Author: pehladik
  *
  * Created on 12 janvier 2012, 10:19
  */
