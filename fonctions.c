@@ -3,6 +3,7 @@
 int write_in_queue(RT_QUEUE *msgQueue, void * data, int size);
 
 void envoyer(void * arg) {
+  DMessage *msg;
   int err;
 
   while (1) {
@@ -13,6 +14,7 @@ void envoyer(void * arg) {
       msg->free(msg);
     } else {
       rt_printf("Error msg queue write: %s\n", strerror(-err));
+
     }
   }
 }
@@ -53,6 +55,7 @@ void connecter(void * arg) {
     }
   }
 }
+
 
 void regarder(void * arg) {
 
@@ -221,7 +224,6 @@ void surveillerConnexion(void *arg) {
           if (write_in_queue(&queueMsgGUI, message, sizeof (DMessage)) < 0) {
             message->free(message);
           }
-
         }
         else{
           rt_mutex_acquire(&mutexCountErrors, TM_INFINITE);
