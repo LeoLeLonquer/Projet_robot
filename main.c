@@ -156,4 +156,7 @@ void deleteTasks() {
     rt_task_delete(&tServeur);
     rt_task_delete(&tconnect);
     rt_task_delete(&tmove);
+    rt_task_delete(&tenvoyer);
+    rt_task_delete(&twatchrobot);
+    rt_task_delete(&tcheckconnexion);
 }
