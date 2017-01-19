@@ -1,5 +1,4 @@
 #include "fonctions.h"
-// 1 2 1 2 test test
 
 int write_in_queue(RT_QUEUE *msgQueue, void * data, int size);
 
@@ -80,18 +79,93 @@ void connecter(void * arg) {
     }
 }
 
-void regarder(void * arg) {
-	
+void regarder(void * arg) { //Tobi
+	Dimage *image ;
+	DPosition * position ;
+	DJpegimage * jpeg ;
+	DMessage * message ;
+
+    rt_printf("tregarder : Debut de l'exécution de tregardert\n");
+    rt_printf("tregarder : Attente du sémarphore semConnecteMoniteur\n");
+    rt_sem_p(&semConnecteMoniteur, TM_INFINITE);
+    rt_printf("tregarder : connecte au moniteur, lancement du calcul périodique des images\n");
+
+    rt_printf("tregarder : Debut de l'éxecution de periodique à 600ms\n");
+    rt_task_set_periodic(NULL, TM_NOW, 600000000);
+    while (1) {
+        /* Attente de l'activation périodique */
+        rt_task_wait_period(NULL);
+        rt_printf("tregarder : Activation périodique\n");
+		rt_mutex_acquire(&mutexRegarderEtCalibrer, TM_INFINITE);
+
+		image = d_new_image() ;
+		jpeg = d_new_jpegimage() ;
+		message = d_new_message() ;
+		camera->get_frame(camera, image) ;
+		position = image->compute_robot_position(image, arene) ;
+		d_imageshop_draw_position(image, arene) ;
+		jpeg->compress(jpeg, image) ;
+
+		rt_printf("tregarder : Envoi message 1 : image\n");
+		message->put_jpeg_image(message, jpeg) ;
+        message->print(message, 100);
+        if (write_in_queue(&queueMsgGUI, message, sizeof (DMessage)) < 0) {
+            //message->free(message);
+			//??
+        }
+		rt_printf("tregarder : Envoi message 2 : position du robot\n");
+		message->put_position(message, position) ;
+        message->print(message, 100);
+        if (write_in_queue(&queueMsgGUI, message, sizeof (DMessage)) < 0) {
+            message->free(message);
+        }
+		image->free(image) ;
+		jpeg->free(jpeg) ;
+		position->free(position) ;
+
+	    rt_mutex_release(&mutexRegarderEtCalibrer);
+	}
 }
 
-void communiquer(void *arg) {
+void calibrer(void * arg) { //Tobi
+	Dimage *image ;
+	int message_recu ;
+	
+	rt_printf("tcalibrer : Debut de l'exécution de tcalibrer\n");
+	while(1) {
+		rt_printf("tcalibrer : Attente de la réception d'un message de calibration\n");
+		rt_sem_p(&semCalibrer, TM_INFINITE);
+		message_recu = msgCalibrer ;
+
+		if (message_recu = ACTION_FIND_ARENA) {
+			rt_mutex_acquire(&mutexRegarderEtCalibrer, TM_INFINITE);
+			
+			//la première fois qu'on arrive ici, on entre forcément dans le boucle
+			while (message_recu = ACTION_FIND_ARENA) {
+				image = d_new_image() ;
+				camera->get_frame(camera, image) ;
+				arene = image->compute_arena_position(image) ;
+			}
+
+		    rt_mutex_release(&mutexRegarderEtCalibrer);
+		} else {
+			rt_printf("tcalibrer : Problème : reçu message incorrect, retour au début de la boucle\n");
+		}
+	}
+}
+
+void communiquer(void *arg) {  //Tobi
     DMessage *msg = d_new_message();
     int var1 = 1;
     int num_msg = 0;
+    int type_action;
 
     rt_printf("tserver : Début de l'exécution de serveur\n");
     serveur->open(serveur, "8000");
     rt_printf("tserver : Connexion\n");
+
+	rt_printf("tserver : envoi du signal \"connecteMoniteur\"\n");
+	rt_sem_v(&semConnecteMoniteur);
 
     rt_mutex_acquire(&mutexEtat, TM_INFINITE);
     etatCommMoniteur = 0;
@@ -101,17 +175,31 @@ void communiquer(void *arg) {
         rt_printf("tserver : Attente d'un message\n");
         var1 = serveur->receive(serveur, msg);
         num_msg++;
-        if (var1 > 0) {
+        if (var1 > 0) { //Si var1 <= 0, sortir de la boucle
             switch (msg->get_type(msg)) {
                 case MESSAGE_TYPE_ACTION:
                     rt_printf("tserver : Le message %d reçu est une action\n",
                             num_msg);
                     DAction *action = d_new_action();
                     action->from_message(action, msg);
-                    switch (action->get_order(action)) {
+                    type_action = action->get_order(action);
+                    switch (type_action) {
                         case ACTION_CONNECT_ROBOT:
                             rt_printf("tserver : Action connecter robot\n");
                             rt_sem_v(&semConnecterRobot);
+                            break;
+                        case ACTION_COMPUTE_CONTINUOUSLY_POSITION:
+                            rt_printf("tserver : Action calculer la position du robot en continu\n");
+                            rt_sem_v(&semComputeContinuouslyPosition);
+                            break;
+                       //pout tout message lié à la calibration de l"atène, transmettre le message au thread calibrer
+                        case :ACTION_FIND_ARENA:
+                        case :ACTION_ARENA_FAILED:
+                        case :ACTION_ARENA_IS_FOUND:
+                            rt_printf("tserver : Action liée à la calibration de l'arène\n");
+                            msgCalibrer = type_action; //mettre le mesage dans la variable,
+                            rt_sem_v(&semCalibrer);//puis envoyer le signal //Est-ce que le TM_INFINITE pose problème ?
+                            //Est-ce qu'il risque y avoir deux messages de calibration qui se suivent sans pouvoir les traiter ?
                             break;
                     }
                     break;
@@ -123,7 +211,14 @@ void communiquer(void *arg) {
                     move->print(move);
                     rt_mutex_release(&mutexMove);
                     break;
+                case MESSAGE_TYPE_MISSION:
+                    rt_printf("tserver : Le message reçu %d est une mission\n",
+                            num_msg);
+                    rt_printf("tserver : Pour l'instant, on ne traite pas ce genre de message\n");
+                    break;
             }
+        } else {
+            rt_printf("tserver : problème à la réception d'un message, sortie de la boucle\n");
         }
     }
 }
