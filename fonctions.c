@@ -3,31 +3,6 @@
 int write_in_queue(RT_QUEUE *msgQueue, void * data, int size);
 
 void envoyer(void * arg) {
-  DMessage *msg;
-  while(1){
-    do{
-      /* Attente de l'activation périodique */
-      rt_task_wait_period(NULL);
-      rt_printf("twatchrobot : Activation périodique\n");
-      status = robot->reload_wdt(robot);
-
-      message = d_new_message();
-      message->put_state(message, status);
-
-      rt_printf("twatchrobot : Envoi message à tcheckconnexion\n");
-      message->print(message, 100);
-
-      if (write_in_queue(&queueErrMsg, message, sizeof (DMessage)) < 0) {
-        message->free(message);
-      }
-
-      rt_mutex_acquire(&mutexEtat, TM_INFINITE);
-      status = etatCommRobot;
-      rt_mutex_release(&mutexEtat);
-
-    }while(status == STATUS_OK);
-
-  }
   int err;
 
   while (1) {
