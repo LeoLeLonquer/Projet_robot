@@ -180,7 +180,7 @@ void deplacer(void *arg) {
 }
 
 void surveiller(void *arg) {
-	int status;
+    int status;
     DMessage *message;
 	
     rt_printf("twatchrobot : Debut de l'éxecution de periodique à 1s\n");
@@ -213,6 +213,7 @@ void surveiller(void *arg) {
 void surveillerConnexion(void *arg) {
 	int status;
 	int loc_cpt;
+	int err;
     DMessage *message;
 	
     while (1) {
