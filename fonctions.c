@@ -255,11 +255,15 @@ int write_in_queue(RT_QUEUE *msgQueue, void * data, int size) {
 
 void verifEtatBatterie(void *arg){
   DMessage *message;
+  battery = d_new_battery();
+
   int status;
-  int* battery = (int*)malloc(sizeof(int));
+  int* level=(int*)malloc(sizeof(int));
+
   rt_printf("tcheckbattery : attente du sémaphore semCheckBattery\n");
   rt_sem_p(&semCheckBattery,TM_INFINITE);
   rt_printf("tcheckbattery : réception du sémaphore semCheckBattery\n");
+
   rt_printf("tcheckbattery : Début de l'éxecution de periodique à 250ms\n");
   rt_task_set_periodic(NULL, TM_NOW, 250000000);
 
@@ -271,7 +275,9 @@ void verifEtatBatterie(void *arg){
     rt_mutex_release(&mutexEtat);
 
     if (status == STATUS_OK) {
-      status=robot->get_vbat(robot, &battery);
+      status=robot->get_vbat(robot, level);
+	  if(*level >= 0 )
+	  	battery->set_level(battery,*level);
       rt_queue_write(&queueErrMsg,&status,sizeof(int),Q_NORMAL);
 
       if (status ==STATUS_OK){
