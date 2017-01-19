@@ -109,7 +109,6 @@ void deplacer(void *arg) {
   int status = 1;
   int gauche;
   int droite;
-  DMessage *message;
 
   rt_printf("tmove : Debut de l'éxecution de periodique à 200 ms\n");
   rt_task_set_periodic(NULL, TM_NOW, 200000000);
@@ -159,7 +158,6 @@ void deplacer(void *arg) {
 
 void surveiller(void *arg) {
   int status;
-  DMessage *message;
 
   rt_printf("twatchrobot : Début de l'éxecution de periodique à 1s\n");
   rt_task_set_periodic(NULL, TM_NOW, 1000000000);
@@ -191,6 +189,7 @@ void surveiller(void *arg) {
 void surveillerConnexion(void *arg) {
   int status;
   int loc_cpt;
+  int err;
   DMessage *message;
 
   while (1) {
