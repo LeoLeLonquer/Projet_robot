@@ -18,9 +18,9 @@ extern "C" {
         void communiquer(void *arg);
         void deplacer(void *arg);
         void envoyer(void *arg);
-		void regarder(void *arg);
-		void surveiller(void *arg);
-		void surveillerConnexion(void *arg);
+	void regarder(void *arg);
+	void surveiller(void *arg);
+	void surveillerConnexion(void *arg);
 		
 #ifdef	__cplusplus
 }
