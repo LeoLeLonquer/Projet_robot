@@ -145,6 +145,7 @@ void calibrer(void * arg) { //Tobi
 				image = d_new_image() ;
 				camera->get_frame(camera, image) ;
 				arene = image->compute_arena_position(image) ;
+				//TODO finir !!!!
 			}
 
 		    rt_mutex_release(&mutexRegarderEtCalibrer);
