@@ -8,8 +8,8 @@ void envoyer(void * arg) {
         	/* Attente de l'activation périodique */
         	rt_task_wait_period(NULL);
         	rt_printf("twatchrobot : Activation périodique\n");
-			status = robot->reload_wdt(robot); 
-		
+			status = robot->reload_wdt(robot);
+
 			message = d_new_message();
         	message->put_state(message, status);
 
@@ -19,13 +19,13 @@ void envoyer(void * arg) {
         	if (write_in_queue(&queueErrMsg, message, sizeof (DMessage)) < 0) {
             	message->free(message);
         	}
-		
+
     		rt_mutex_acquire(&mutexEtat, TM_INFINITE);
     		status = etatCommRobot;
     		rt_mutex_release(&mutexEtat);
-			
+
 		}while(status == STATUS_OK);
-		
+
 	}
     int err;
 
@@ -66,7 +66,7 @@ void connecter(void * arg) {
 		rt_mutex_acquire(&mutexEtat, TM_INFINITE);
         etatCommRobot = status;
         rt_mutex_release(&mutexEtat);
-		
+
         message = d_new_message();
         message->put_state(message, status);
 
@@ -80,7 +80,7 @@ void connecter(void * arg) {
 }
 
 void regarder(void * arg) {
-	
+
 }
 
 void communiquer(void *arg) {
@@ -172,9 +172,9 @@ void deplacer(void *arg) {
             rt_mutex_release(&mutexMove);
 
             status = robot->set_motors(robot, gauche, droite);
-				
+
         	rt_queue_write(&queueErrMsg,&status,sizeof(int),Q_NORMAL);
-				
+
         }
     }
 }
@@ -182,31 +182,31 @@ void deplacer(void *arg) {
 void surveiller(void *arg) {
 	int status;
     DMessage *message;
-	
-    rt_printf("twatchrobot : Debut de l'éxecution de periodique à 1s\n");
+
+    rt_printf("twatchrobot : Début de l'éxecution de periodique à 1s\n");
     rt_task_set_periodic(NULL, TM_NOW, 1000000000);
-	
+
 	while(1){
-		
-        rt_printf("twatchrobot : Attente du sémarphore semWatchRobot\n");
+
+        rt_printf("twatchrobot : Attente du sémaphore semWatchRobot\n");
         rt_sem_p(&semWatchRobot, TM_INFINITE);
         rt_printf("twatchrobot : Début de l'envoi de reload_wdt\n");
-		
+
 		do{
         	/* Attente de l'activation périodique */
         	rt_task_wait_period(NULL);
         	rt_printf("twatchrobot : Activation périodique\n");
-			status = robot->reload_wdt(robot); 
+			status = robot->reload_wdt(robot);
 
         	rt_printf("twatchrobot : Envoi status à tcheckconnexion\n");
         	rt_queue_write(&queueErrMsg,&status,sizeof(int),Q_NORMAL);
-		
+
     		rt_mutex_acquire(&mutexEtat, TM_INFINITE);
     		status = etatCommRobot;
     		rt_mutex_release(&mutexEtat);
-			
+
 		}while(status == STATUS_OK);
-		
+
 	}
 }
 
@@ -214,7 +214,7 @@ void surveillerConnexion(void *arg) {
 	int status;
 	int loc_cpt;
     DMessage *message;
-	
+
     while (1) {
         rt_printf("tcheckconnexion : Attente d'un message\n");
         if ((err = rt_queue_read(&queueErrMsg, &status, sizeof (int), TM_INFINITE)) >= 0) { /* !!!!!!!!!!!!!!!!!!!! Erreur possible ICI ***************************/
@@ -232,11 +232,11 @@ void surveillerConnexion(void *arg) {
 					rt_mutex_acquire(&mutexCountErrors, TM_INFINITE);
         			countErrors=0;
         			rt_mutex_release(&mutexCountErrors);
-					
+
 					rt_mutex_acquire(&mutexEtat, TM_INFINITE);
     				etatCommRobot = STATUS_ERR_UNKNOWN;
     				rt_mutex_release(&mutexEtat);
-					
+
         			message = d_new_message();
         			message->put_state(message, STATUS_ERR_UNKNOWN);
 
@@ -246,7 +246,7 @@ void surveillerConnexion(void *arg) {
 					if (write_in_queue(&queueMsgGUI, message, sizeof (DMessage)) < 0) {
 						message->free(message);
 					}
-					
+
 				}
 				else{
 					rt_mutex_acquire(&mutexCountErrors, TM_INFINITE);
@@ -278,6 +278,28 @@ int write_in_queue(RT_QUEUE *msgQueue, void * data, int size) {
 }
 
 // TODO
-void verif_batterie() {
+void verifEtatBatterie(void *arg){
+  int battery, status;
+  rt_printf("tcheckbattery : attente du sémaphore semCheckBattery\n");
+  rt_sem_p(&semCheckBattery);
+  rt_printf("tcheckbattery : réception du sémaphore semCheckBattery\n");
+  rt_printf("tcheckbattery : Début de l'éxecution de periodique à 250ms\n");
+  rt_task_set_periodic(NULL, TM_NOW, 250000000);
+
+  while (1) {
+      /* Attente de l'activation périodique */
+      rt_task_wait_period(NULL);
+      rt_mutex_acquire(&mutexEtat, TM_INFINITE);
+      status = etatCommRobot;
+      rt_mutex_release(&mutexEtat);
+
+      if (status == STATUS_OK) {
+
+
+      }
+
+  }
+
+
 
 }

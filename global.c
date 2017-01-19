@@ -13,6 +13,7 @@ RT_TASK tmove;
 RT_TASK tenvoyer;
 RT_TASK twatchrobot;
 RT_TASK tcheckconnexion;
+RT_TASK tcheckbattery;
 
 RT_MUTEX mutexEtat;
 RT_MUTEX mutexMove;
@@ -42,3 +43,4 @@ int PRIORITY_TMOVE = 10;
 int PRIORITY_TENVOYER = 25;
 int PRIORITY_TWATCHROBOT = 99;
 int PRIORITY_TCHECKCONNEXION = 5;
+int PRIORITY_TCHECKBATTERY= 9;

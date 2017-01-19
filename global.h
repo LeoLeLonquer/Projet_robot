@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   global.h
  * Author: pehladik
  *
@@ -17,6 +17,7 @@ extern RT_TASK tmove;
 extern RT_TASK tenvoyer;
 extern RT_TASK twatchrobot;
 extern RT_TASK tcheckconnexion;
+extern RT_TASK tcheckbattery;
 
 /* @descripteurs des mutex */
 extern RT_MUTEX mutexEtat;
@@ -49,6 +50,6 @@ extern int PRIORITY_TMOVE;
 extern int PRIORITY_TENVOYER;
 extern int PRIORITY_TWATCHROBOT;
 extern int PRIORITY_TCHECKCONNEXION;
+extern int PRIORITY_TCHECKBATTERY;
 
 #endif	/* GLOBAL_H */
-
