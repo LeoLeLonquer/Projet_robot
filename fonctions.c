@@ -254,6 +254,7 @@ int write_in_queue(RT_QUEUE *msgQueue, void * data, int size) {
 }
 
 void verifEtatBatterie(void *arg){
+  DMessage *message;
   int battery, status;
   rt_printf("tcheckbattery : attente du sémaphore semCheckBattery\n");
   rt_sem_p(&semCheckBattery,TM_INFINITE);
