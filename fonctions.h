@@ -1,6 +1,6 @@
-/* 
+/*
  * File:   fonctions.h
- * Author: pehladik
+ * Author: pehladik et Léo
  *
  * Created on 12 janvier 2012, 10:19
  */
@@ -21,10 +21,9 @@ extern "C" {
 	void regarder(void *arg);
 	void surveiller(void *arg);
 	void surveillerConnexion(void *arg);
-		
+
 #ifdef	__cplusplus
 }
 #endif
 
 #endif	/* FONCTIONS_H */
-
