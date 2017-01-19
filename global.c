@@ -33,6 +33,7 @@ int countErrors = 0;
 DRobot *robot;
 DMovement *move;
 DServer *serveur;
+DBattery *battery;
 
 
 int MSG_QUEUE_SIZE = 10;
