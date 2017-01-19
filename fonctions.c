@@ -54,26 +54,14 @@ void connecter(void * arg) {
     rt_printf("tconnect : Ouverture de la communication avec le robot\n");
     status = robot->open_device(robot);
 
-
-<<<<<<< HEAD
     if (status == STATUS_OK) {
-      status = robot->start_insecurely(robot);
+      status = robot->start(robot);
       if (status == STATUS_OK){
         rt_sem_v(&semCheckBattery);
         rt_sem_v(&semWatchRobot);
         rt_printf("tconnect : Robot démarrer\n");
       }
     }
-=======
-        if (status == STATUS_OK) {
-            status = robot->start(robot);
-            if (status == STATUS_OK){
-				rt_sem_v(&semCheckBattery);
-				rt_sem_v(&semWatchRobot);
-                rt_printf("tconnect : Robot démarrer\n");
-            }
-        }
->>>>>>> master
 
     rt_mutex_acquire(&mutexEtat, TM_INFINITE);
     etatCommRobot = status;
