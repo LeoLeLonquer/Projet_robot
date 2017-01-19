@@ -55,7 +55,7 @@ void connecter(void * arg) {
 
 
         if (status == STATUS_OK) {
-            status = robot->start_insecurely(robot);
+            status = robot->start(robot);
             if (status == STATUS_OK){
 				rt_sem_v(&semCheckBattery);
 				rt_sem_v(&semWatchRobot);
