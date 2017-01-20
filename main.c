@@ -123,6 +123,14 @@ void initStruct(void) {
         rt_printf("Error task create: %s\n", strerror(-err));
         exit(EXIT_FAILURE);
     }
+    if (err = rt_task_create(&tregarder, NULL, 0, PRIORITY_TCHECKBATTERY, 0)) {
+        rt_printf("Error task create: %s\n", strerror(-err));
+        exit(EXIT_FAILURE);
+    }
+    if (err = rt_task_create(&tcaliber, NULL, 0, PRIORITY_TCHECKBATTERY, 0)) {
+        rt_printf("Error task create: %s\n", strerror(-err));
+        exit(EXIT_FAILURE);
+    }
 
     /* Creation des files de messages */
     if (err = rt_queue_create(&queueMsgGUI, "toto", MSG_QUEUE_SIZE*sizeof(DMessage), MSG_QUEUE_SIZE, Q_FIFO)){
@@ -179,6 +187,14 @@ void startTasks() {
         rt_printf("Error task start: %s\n", strerror(-err));
         exit(EXIT_FAILURE);
     }
+    if (err = rt_task_start(&tregarder, &regarder, NULL)) {
+        rt_printf("Error task start: %s\n", strerror(-err));
+        exit(EXIT_FAILURE);
+    }
+    if (err = rt_task_start(&tcaliber, &calibrer, NULL)) {
+        rt_printf("Error task start: %s\n", strerror(-err));
+        exit(EXIT_FAILURE);
+    }
 }
 
 void deleteTasks() {
@@ -189,4 +205,6 @@ void deleteTasks() {
     rt_task_delete(&twatchrobot);
     rt_task_delete(&tcheckconnexion);
     rt_task_delete(&tcheckbattery);
+    rt_task_delete(&tregarder);
+    rt_task_delete(&tcaliber);
 }
