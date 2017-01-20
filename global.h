@@ -25,6 +25,7 @@ extern RT_TASK tcaliber;
 extern RT_MUTEX mutexEtat;
 extern RT_MUTEX mutexMove;
 extern RT_MUTEX mutexCountErrors;
+extern RT_MUTEX mutexRegarderEtCalibrer;
 
 /* @descripteurs des sempahore */
 extern RT_SEM semConnecterRobot;
