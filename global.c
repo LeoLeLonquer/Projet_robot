@@ -34,6 +34,10 @@ DRobot *robot;
 DMovement *move;
 DServer *serveur;
 DBattery *battery;
+DCamera *camera ;
+DArena * arene ;
+int msgCalibrer ; //Identification du type de message (is_found, failed, etc)
+int ComputeContinuouslyPosition = 0 ;
 
 
 int MSG_QUEUE_SIZE = 10;
