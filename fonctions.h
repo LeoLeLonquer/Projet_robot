@@ -22,6 +22,7 @@ extern "C" {
 	void surveiller(void *arg);
 	void surveillerConnexion(void *arg);
         void verifEtatBatterie(void *arg);
+	void calibrer(void *arg);
 
 #ifdef	__cplusplus
 }
