@@ -123,11 +123,11 @@ void initStruct(void) {
         rt_printf("Error task create: %s\n", strerror(-err));
         exit(EXIT_FAILURE);
     }
-    if (err = rt_task_create(&tregarder, NULL, 0, PRIORITY_TCHECKBATTERY, 0)) {
+    if (err = rt_task_create(&tregarder, NULL, 0, PRIORITY_TREGARDER, 0)) {
         rt_printf("Error task create: %s\n", strerror(-err));
         exit(EXIT_FAILURE);
     }
-    if (err = rt_task_create(&tcaliber, NULL, 0, PRIORITY_TCHECKBATTERY, 0)) {
+    if (err = rt_task_create(&tcaliber, NULL, 0, PRIORITY_TCALIBER, 0)) {
         rt_printf("Error task create: %s\n", strerror(-err));
         exit(EXIT_FAILURE);
     }
