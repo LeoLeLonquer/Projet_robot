@@ -280,7 +280,6 @@ int write_in_queue(RT_QUEUE *msgQueue, void * data, int size) {
 
 void verifEtatBatterie(void *arg){
   DMessage *message;
-  battery = d_new_battery();
 
   int status;
   int* level=(int*)malloc(sizeof(int));
