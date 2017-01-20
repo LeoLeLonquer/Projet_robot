@@ -58,7 +58,7 @@ void connecter(void * arg) {
 
 
 void regarder(void * arg) {
-	Dimage *image ;
+	DImage *image ;
 	DPosition * position ;
 	DJpegimage * jpeg ;
 	DMessage * message ;
@@ -124,7 +124,7 @@ void regarder(void * arg) {
 }
 
 void calibrer(void * arg) {
-	Dimage *image ;
+	DImage *image ;
 	DMessage * message ;
 	DJpegimage * jpeg ;
 	int message_recu ;
