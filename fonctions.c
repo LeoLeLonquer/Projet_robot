@@ -58,10 +58,124 @@ void connecter(void * arg) {
 
 
 void regarder(void * arg) {
+	Dimage *image ;
+	DPosition * position ;
+	DJpegimage * jpeg ;
+	DMessage * message ;
 
+    rt_printf("tregarder : Debut de l'exécution de tregardert\n");
+    rt_printf("tregarder : Attente du sémarphore semConnecteMoniteur\n");
+    rt_sem_p(&semConnecteMoniteur, TM_INFINITE);
+    rt_printf("tregarder : connecte au moniteur, lancement du calcul périodique des images\n");
+
+    rt_printf("tregarder : Debut de l'éxecution de periodique à 600ms\n");
+    rt_task_set_periodic(NULL, TM_NOW, 600000000);
+    while (1) {
+        /* Attente de l'activation périodique */
+        rt_task_wait_period(NULL);
+        rt_printf("tregarder : Activation périodique\n");
+		rt_mutex_acquire(&mutexRegarderEtCalibrer, TM_INFINITE);
+
+		if (ComputeContinuouslyPosition = 1) { // On a reçu le message ComputeContinuouslyPosition
+			image = d_new_image() ;
+			jpeg = d_new_jpegimage() ;
+			message = d_new_message() ;
+			camera->get_frame(camera, image) ;
+			position = image->compute_robot_position(image, arene) ;
+			d_imageshop_draw_position(image, arene) ;
+			jpeg->compress(jpeg, image) ;
+
+			rt_printf("tregarder : Envoi message 1 : image\n");
+			message->put_jpeg_image(message, jpeg) ;
+	        message->print(message, 100);
+	        if (write_in_queue(&queueMsgGUI, message, sizeof (DMessage)) < 0) {
+	            //message->free(message);
+	        }
+			rt_printf("tregarder : Envoi message 2 : position du robot\n");
+			message->put_position(message, position) ;
+	        message->print(message, 100);
+	        if (write_in_queue(&queueMsgGUI, message, sizeof (DMessage)) < 0) {
+	            message->free(message);
+	        }
+			image->free(image) ;
+			jpeg->free(jpeg) ;
+			position->free(position) ;
+		} else if (ComputeContinuouslyPosition = 0) { // On n'a pas reçu le message ComputeContinuouslyPosition
+			image = d_new_image() ;
+			jpeg = d_new_jpegimage() ;
+			message = d_new_message() ;
+			camera->get_frame(camera, image) ;
+			jpeg->compress(jpeg, image) ;
+
+			rt_printf("tregarder : Envoi message\n");
+			message->put_jpeg_image(message, jpeg) ;
+	        message->print(message, 100);
+	        if (write_in_queue(&queueMsgGUI, message, sizeof (DMessage)) < 0) {
+	            message->free(message);
+	        }
+			image->free(image) ;
+			jpeg->free(jpeg) ;
+		} else {
+			rt_printf("tregarder : Il y a une erreur dans la valeur de ComputeContinuouslyPosition\n");
+		}
+
+	    rt_mutex_release(&mutexRegarderEtCalibrer);
+	}
 }
 
-void communiquer(void *arg) { //TODO
+void calibrer(void * arg) {
+	Dimage *image ;
+	DMessage * message ;
+	DJpegimage * jpeg ;
+	int message_recu ;
+	
+	rt_printf("tcalibrer : Debut de l'exécution de tcalibrer\n");
+	while(1) {
+		rt_printf("tcalibrer : Attente de la réception d'un message de calibration\n");
+		rt_sem_p(&semCalibrer, TM_INFINITE);
+		message_recu = msgCalibrer ;
+
+		if (message_recu = ACTION_FIND_ARENA) {
+			rt_mutex_acquire(&mutexRegarderEtCalibrer, TM_INFINITE);
+			
+			//la première fois qu'on arrive ici, on entre forcément dans le boucle
+			while (message_recu = ACTION_FIND_ARENA) {
+				image = d_new_image() ;
+				jpeg = d_new_jpegimage() ;
+				message = d_new_message() ;
+
+				camera->get_frame(camera, image) ;
+				arene = image->compute_arena_position(image) ;
+				d_imageshop_draw_arena(image, arene) ;
+				jpeg->compress(jpeg, image) ;
+
+				rt_printf("tcalibrer : Envoi message\n");
+				message->put_jpeg_image(message, jpeg) ;
+        		message->print(message, 100);
+				if (write_in_queue(&queueMsgGUI, message, sizeof (DMessage)) < 0) {
+					message->free(message) ;
+				}
+
+				rt_printf("tcalibrer : Attente réponse de moniteur\n");
+				rt_sem_p(&semCalibrer, TM_INFINITE);
+				message_recu = msgCalibrer ; //si le message est de type FIND, on retourne dans la boucle ensuite
+
+				image->free(image) ;
+				jpeg->free(jpeg) ;
+				message->free(message) ;
+			}
+			//message_recu contient ce qui a été reçu comme réponse à notre image de l'arène
+			//if (message_recu = ACTION_ARENA_IS_FOUND) {} //?? dans le cahier des charges, il faut "sauvegarder" l'arène. Mais on l'a déjà fait en fait...
+			// si on a ACTION_ARENA_FAILED, on ne fait rien et on reboucle tout de suite.
+
+		    rt_mutex_release(&mutexRegarderEtCalibrer);
+		} else {
+			rt_printf("tcalibrer : Problème : reçu message incorrect, retour au début de la boucle\n");
+		}
+	}
+}
+
+void communiquer(void *arg) { 
     DMessage *msg = d_new_message();
     int var1 = 1;
     int num_msg = 0;
