@@ -61,48 +61,73 @@ void regarder(void * arg) {
 
 }
 
-void communiquer(void *arg) {
-  DMessage *msg = d_new_message();
-  int var1 = 1;
-  int num_msg = 0;
+void communiquer(void *arg) { //TODO
+    DMessage *msg = d_new_message();
+    int var1 = 1;
+    int num_msg = 0;
+    int type_action;
 
-  rt_printf("tserver : Début de l'exécution de serveur\n");
-  serveur->open(serveur, "8000");
-  rt_printf("tserver : Connexion\n");
+    rt_printf("tserver : Début de l'exécution de serveur\n");
+    serveur->open(serveur, "8000");
+    rt_printf("tserver : Connexion\n");
 
-  rt_mutex_acquire(&mutexEtat, TM_INFINITE);
-  etatCommMoniteur = 0;
-  rt_mutex_release(&mutexEtat);
+	rt_printf("tserver : envoi du signal \"connecteMoniteur\"\n");
+	rt_sem_v(&semConnecteMoniteur);
 
-  while (var1 > 0) {
-    rt_printf("tserver : Attente d'un message\n");
-    var1 = serveur->receive(serveur, msg);
-    num_msg++;
-    if (var1 > 0) {
-      switch (msg->get_type(msg)) {
-        case MESSAGE_TYPE_ACTION:
-        rt_printf("tserver : Le message %d reçu est une action\n",
-        num_msg);
-        DAction *action = d_new_action();
-        action->from_message(action, msg);
-        switch (action->get_order(action)) {
-          case ACTION_CONNECT_ROBOT:
-          rt_printf("tserver : Action connecter robot\n");
-          rt_sem_v(&semConnecterRobot);
-          break;
+    rt_mutex_acquire(&mutexEtat, TM_INFINITE);
+    etatCommMoniteur = 0;
+    rt_mutex_release(&mutexEtat);
+
+    while (var1 > 0) {
+        rt_printf("tserver : Attente d'un message\n");
+        var1 = serveur->receive(serveur, msg);
+        num_msg++;
+        if (var1 > 0) { //Si var1 <= 0, sortir de la boucle
+            switch (msg->get_type(msg)) {
+                case MESSAGE_TYPE_ACTION:
+                    rt_printf("tserver : Le message %d reçu est une action\n",
+                            num_msg);
+                    DAction *action = d_new_action();
+                    action->from_message(action, msg);
+                    type_action = action->get_order(action);
+                    switch (type_action) {
+                        case ACTION_CONNECT_ROBOT:
+                            rt_printf("tserver : Action connecter robot\n");
+                            rt_sem_v(&semConnecterRobot);
+                            break;
+                        case ACTION_COMPUTE_CONTINUOUSLY_POSITION:
+                            rt_printf("tserver : Action calculer la position du robot en continu\n");
+                            ComputeContinuouslyPosition = 1 ;
+                            break;
+                       // pout tout message lié à la calibration de l'arène, transmettre le message au thread calibrer
+                        case : ACTION_FIND_ARENA:
+                        case : ACTION_ARENA_FAILED:
+                        case : ACTION_ARENA_IS_FOUND:
+                            rt_printf("tserver : Action liée à la calibration de l'arène\n");
+                            msgCalibrer = type_action; //mettre le mesage dans la variable,
+                            rt_sem_v(&semCalibrer);//puis envoyer le signal //Est-ce que le TM_INFINITE pose problème ?
+                            //Est-ce qu'il risque y avoir deux messages de calibration qui se suivent sans pouvoir les traiter ?
+                            break;
+                    }
+                    break;
+                case MESSAGE_TYPE_MOVEMENT:
+                    rt_printf("tserver : Le message reçu %d est un mouvement\n",
+                            num_msg);
+                    rt_mutex_acquire(&mutexMove, TM_INFINITE);
+                    move->from_message(move, msg);
+                    move->print(move);
+                    rt_mutex_release(&mutexMove);
+                    break;
+                case MESSAGE_TYPE_MISSION:
+                    rt_printf("tserver : Le message reçu %d est une mission\n",
+                            num_msg);
+                    rt_printf("tserver : Pour l'instant, on ne traite pas ce genre de message\n");
+                    break;
+            }
+        } else {
+            rt_printf("tserver : problème à la réception d'un message, sortie de la boucle\n");
         }
-        break;
-        case MESSAGE_TYPE_MOVEMENT:
-        rt_printf("tserver : Le message reçu %d est un mouvement\n",
-        num_msg);
-        rt_mutex_acquire(&mutexMove, TM_INFINITE);
-        move->from_message(move, msg);
-        move->print(move);
-        rt_mutex_release(&mutexMove);
-        break;
-      }
     }
-  }
 }
 
 void deplacer(void *arg) {
