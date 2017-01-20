@@ -18,6 +18,8 @@ extern RT_TASK tenvoyer;
 extern RT_TASK twatchrobot;
 extern RT_TASK tcheckconnexion;
 extern RT_TASK tcheckbattery;
+extern RT_TASK tregarder;
+extern RT_TASK tcaliber;
 
 /* @descripteurs des mutex */
 extern RT_MUTEX mutexEtat;
