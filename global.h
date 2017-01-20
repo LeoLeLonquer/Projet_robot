@@ -42,6 +42,10 @@ extern DServer *serveur;
 extern DRobot *robot;
 extern DMovement *move;
 extern DBattery *battery;
+extern DCamera *camera ;
+extern DArena * arene ;
+extern int msgCalibrer; //Identification du type de message (is_found, failed, etc)
+extern int ComputeContinuouslyPosition ;
 
 /* @constantes */
 extern int MSG_QUEUE_SIZE;
