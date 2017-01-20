@@ -76,7 +76,7 @@ void regarder(void * arg) {
         rt_printf("tregarder : Activation périodique\n");
 		rt_mutex_acquire(&mutexRegarderEtCalibrer, TM_INFINITE);
 
-		if (ComputeContinuouslyPosition = 1) { // On a reçu le message ComputeContinuouslyPosition
+		if (ComputeContinuouslyPosition == 1) { // On a reçu le message ComputeContinuouslyPosition
 			image = d_new_image() ;
 			jpeg = d_new_jpegimage() ;
 			message = d_new_message() ;
@@ -100,7 +100,7 @@ void regarder(void * arg) {
 			image->free(image) ;
 			jpeg->free(jpeg) ;
 			position->free(position) ;
-		} else if (ComputeContinuouslyPosition = 0) { // On n'a pas reçu le message ComputeContinuouslyPosition
+		} else if (ComputeContinuouslyPosition == 0) { // On n'a pas reçu le message ComputeContinuouslyPosition
 			image = d_new_image() ;
 			jpeg = d_new_jpegimage() ;
 			message = d_new_message() ;
