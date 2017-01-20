@@ -20,6 +20,7 @@ RT_TASK tcaliber;
 RT_MUTEX mutexEtat;
 RT_MUTEX mutexMove;
 RT_MUTEX mutexCountErrors;
+RT_MUTEX mutexRegarderEtCalibrer;
 
 RT_SEM semConnecterRobot;
 RT_SEM semCheckBattery;
