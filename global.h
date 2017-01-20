@@ -30,6 +30,8 @@ extern RT_MUTEX mutexCountErrors;
 extern RT_SEM semConnecterRobot;
 extern RT_SEM semCheckBattery;
 extern RT_SEM semWatchRobot;
+extern RT_SEM semCalibrer;
+extern RT_SEM semConnecteMoniteur;
 
 /* @descripteurs des files de messages */
 extern RT_QUEUE queueMsgGUI;
