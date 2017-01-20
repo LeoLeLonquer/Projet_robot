@@ -24,6 +24,8 @@ RT_MUTEX mutexCountErrors;
 RT_SEM semConnecterRobot;
 RT_SEM semCheckBattery;
 RT_SEM semWatchRobot;
+RT_SEM semCalibrer;
+RT_SEM semConnecteMoniteur;
 
 RT_QUEUE queueMsgGUI;
 RT_QUEUE queueErrMsg;
