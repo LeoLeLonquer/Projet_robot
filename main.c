@@ -65,6 +65,11 @@ void initStruct(void) {
         rt_printf("Error mutex create: %s\n", strerror(-err));
         exit(EXIT_FAILURE);
     }
+    /* Creation du mutex spécifique pour regarder et calibrer TODO */
+    if (err = rt_mutex_create(&mutexRegarderEtCalibrer, NULL)) {
+        rt_printf("Error mutex create: %s\n", strerror(-err));
+        exit(EXIT_FAILURE);
+    }
 
     /* Creation du semaphore */
     if (err = rt_sem_create(&semConnecterRobot, NULL, 0, S_FIFO)) {
@@ -79,6 +84,15 @@ void initStruct(void) {
         rt_printf("Error semaphore create: %s\n", strerror(-err));
         exit(EXIT_FAILURE);
     }
+        if (err = rt_sem_create(&semConnecteMoniteur, NULL, 0, S_FIFO)) {//TODO
+        rt_printf("Error semaphore create: %s\n", strerror(-err));
+        exit(EXIT_FAILURE);
+    }
+    if (err = rt_sem_create(&semCalibrer, NULL, 0, S_FIFO)) {//TODO
+        rt_printf("Error semaphore create: %s\n", strerror(-err));
+        exit(EXIT_FAILURE);
+    }
+
 
     /* Creation des taches */
     if (err = rt_task_create(&tServeur, NULL, 0, PRIORITY_TSERVEUR, 0)) {
@@ -119,11 +133,19 @@ void initStruct(void) {
         rt_printf("Error msg queue create: %s\n", strerror(-err));
         exit(EXIT_FAILURE);
     }
+    //nb : les messages de type FIND_ARENA, FAILED, etc. sont des int, donc, dans communiquer, si on reçoit par exemple FIND_ARENA, il suffira de mettre FIND_ARENA dans la msg_queue. (pas le peine de faire une distinction de cas du genre "if 3 then bla, if 1, etc.
+    if (err = rt_queue_create(&queueCalibrer, "toto2", MSG_QUEUE_SIZE*sizeof(int), MSG_QUEUE_SIZE, Q_FIFO)){
+        rt_printf("Error msg queue create: %s\n", strerror(-err));
+        exit(EXIT_FAILURE);
+    }
 
     /* Creation des structures globales du projet */
     robot = d_new_robot();
     move = d_new_movement();
     serveur = d_new_server();
+    camera = d_new_camera() ;
+	camera->open(camera) ;
+	arene = d_new_arena() ;
 }
 
 void startTasks() {
