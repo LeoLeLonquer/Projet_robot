@@ -144,8 +144,9 @@ void initStruct(void) {
     move = d_new_movement();
     serveur = d_new_server();
     camera = d_new_camera() ;
-	camera->open(camera) ;
-	arene = d_new_arena() ;
+    camera->open(camera) ;
+    arene = d_new_arena() ;
+    battery = d_new_battery();
 }
 
 void startTasks() {
