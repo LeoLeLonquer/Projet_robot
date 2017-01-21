@@ -82,7 +82,7 @@ void regarder(void * arg) {
 			message = d_new_message() ;
 			camera->get_frame(camera, image) ;
 			position = image->compute_robot_position(image, arene) ;
-			d_imageshop_draw_position(image, arene) ;
+			d_imageshop_draw_position(image, position) ;
 			jpeg->compress(jpeg, image) ;
 
 			rt_printf("tregarder : Envoi message 1 : image\n");
