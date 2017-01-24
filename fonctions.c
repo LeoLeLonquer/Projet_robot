@@ -135,11 +135,11 @@ void calibrer(void * arg) {
 		rt_sem_p(&semCalibrer, TM_INFINITE);
 		message_recu = msgCalibrer ;
 
-		if (message_recu = ACTION_FIND_ARENA) {
+		if (message_recu == ACTION_FIND_ARENA) {
 			rt_mutex_acquire(&mutexRegarderEtCalibrer, TM_INFINITE);
 			
 			//la première fois qu'on arrive ici, on entre forcément dans le boucle
-			while (message_recu = ACTION_FIND_ARENA) {
+			while (message_recu == ACTION_FIND_ARENA) {
 				image = d_new_image() ;
 				jpeg = d_new_jpegimage() ;
 				message = d_new_message() ;
@@ -214,9 +214,19 @@ void communiquer(void *arg) {
                             ComputeContinuouslyPosition = 1 ;
                             break;
                        // pout tout message lié à la calibration de l'arène, transmettre le message au thread calibrer
-                        case : ACTION_FIND_ARENA:
-                        case : ACTION_ARENA_FAILED:
-                        case : ACTION_ARENA_IS_FOUND:
+                        case ACTION_FIND_ARENA:
+                            rt_printf("tserver : Action liée à la calibration de l'arène\n");
+                            msgCalibrer = type_action; //mettre le mesage dans la variable,
+                            rt_sem_v(&semCalibrer);//puis envoyer le signal //Est-ce que le TM_INFINITE pose problème ?
+                            //Est-ce qu'il risque y avoir deux messages de calibration qui se suivent sans pouvoir les traiter ?
+                            break;
+                        case ACTION_ARENA_FAILED:
+                            rt_printf("tserver : Action liée à la calibration de l'arène\n");
+                            msgCalibrer = type_action; //mettre le mesage dans la variable,
+                            rt_sem_v(&semCalibrer);//puis envoyer le signal //Est-ce que le TM_INFINITE pose problème ?
+                            //Est-ce qu'il risque y avoir deux messages de calibration qui se suivent sans pouvoir les traiter ?
+                            break;
+                        case ACTION_ARENA_IS_FOUND:
                             rt_printf("tserver : Action liée à la calibration de l'arène\n");
                             msgCalibrer = type_action; //mettre le mesage dans la variable,
                             rt_sem_v(&semCalibrer);//puis envoyer le signal //Est-ce que le TM_INFINITE pose problème ?
