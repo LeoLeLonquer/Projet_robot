@@ -30,6 +30,7 @@ RT_SEM semConnecteMoniteur;
 
 RT_QUEUE queueMsgGUI;
 RT_QUEUE queueErrMsg;
+RT_QUEUE queueCalibrer;
 
 
 int etatCommMoniteur = 1;
