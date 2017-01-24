@@ -37,7 +37,7 @@ extern RT_SEM semConnecteMoniteur;
 /* @descripteurs des files de messages */
 extern RT_QUEUE queueMsgGUI;
 extern RT_QUEUE queueErrMsg;
-
+extern RT_QUEUE queueCalibrer;
 
 /* @variables partagées */
 extern int etatCommMoniteur;
